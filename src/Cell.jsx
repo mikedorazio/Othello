@@ -6,7 +6,7 @@ export default function Cell( {entry} ) {
     return (
         <div className="cell-container">
             <div className={entry.color} number={entry.id}>
-                <sub>{subLable}</sub>
+                {/* <sub>{subLable}</sub> */}
             </div>
         </div>
     )

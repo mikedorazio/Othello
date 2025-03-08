@@ -51,19 +51,25 @@ export default function useOthello(board, setBoard, currentPlayer, setCurrentPla
             return true;
         }
 
+        // check if there is a space next to us and if so...return false
+        if (tempBoard[r][c].code == CodeColor.BLANK.code) {
+            //console.log("checkLineMatch found a blank...returning false");
+            return false;
+        }
+
         if ((r + dr < 0) || (r + dr > 7)) {
-            //console.log("adjacentSupport. off board - row", r, dr);
+            //console.log("checkLineMatch. off board - row", r, dr);
             return false;
         }
         if ((c + dc < 0) || (c + dc > 7)) {
-            //console.log("adjacentSupport. off board - column", c, dc);
+            //console.log("checkLineMatch. off board - column", c, dc);
             return false;
         }
         return checkLineMatch(player, dr, dc, r + dr, c + dc);
     }
 
-    // for every spot on the board, see if a relative position (north, south east, west etc) is a valid spot for the player whos turn it is.
-    // if you find a spot that is eligible in any direction, pass it to 
+    // for every spot on the board, see if a surrounding position (north, south east, west etc) is a valid spot for the player whos turn it is.
+    // if you find a spot that is eligible in any direction, pass it to other functions that can further investigate if it is a valid spot.
     function calculateValidSpots() {
         //const tempBoard = JSON.parse(JSON.stringify(board));
         for (let i = 0; i < 8; i++) {;
@@ -119,17 +125,78 @@ export default function useOthello(board, setBoard, currentPlayer, setCurrentPla
         console.log("clearOutOldOptions", tempBoard);
     }
 
-    function checkForValidMove(element, number) {
-        const row = Math.floor(number / 8);
-        const column = number % 8;
-        console.log("checkForValidMove", number, tempBoard[row][column]);
+    function isValidMove(row, column) {
+        console.log("checkForValidMove", row, column, tempBoard[row][column]);
         if (tempBoard[row][column].code == CodeColor.OPTION_BLACK.code || tempBoard[row][column].code == CodeColor.OPTION_WHITE.code) {
             console.log("checkForValidMove says YES");
+            return true;
         }
         else {
             console.log("checkForValidMoves says NO");
+            return false;
+        }          
+    }
+
+    function flipLine(dr, dc, r, c) {
+        checker = checker + 1;
+        //console.log("checkLineMatch", dr, dc, r, c);
+        if (checker > 500) {
+            //console.log("CHECKER SAVES THE DAY in flipLine()");
+            return true;
         }
-                    
+        // make sure the spot in question is on the board
+        if ((r + dr < 0) || (r + dr > 7)) {
+            //console.log("adjacentSupport. row off board - ", index);
+            return false;
+        }
+        if ((c + dc < 0) || (c + dc > 7)) {
+            //console.log("adjacentSupport. column off board - ", index);
+            return false;
+        }
+        if (tempBoard[r + dr][c + dc].code == CodeColor.BLANK.code) {
+            return false;
+        }
+        if (tempBoard[r + dr][c + dc].code == tempPlayer.code) {
+            return true;
+        }
+        else {
+            if (flipLine(dr, dc, r + dr, c + dc)) {
+                if (tempPlayer == Player.BLACK) {
+                    tempBoard[r + dr][c + dc].code = CodeColor.BLACK.code;  
+                    tempBoard[r + dr][c + dc].color = CodeColor.BLACK.color;
+                }
+                else {
+                    tempBoard[r + dr][c + dc].code = CodeColor.WHITE.code;  
+                    tempBoard[r + dr][c + dc].color = CodeColor.WHITE.color;
+                }
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
+    function flipCapturedSpots(row, column) {
+        flipLine(-1, -1, row, column);
+        flipLine(-1,  0, row, column);
+        flipLine(-1,  1, row, column);
+        flipLine( 0, -1, row, column);
+        flipLine( 0,  1, row, column)
+        flipLine( 1, -1, row, column);
+        flipLine( 1, 0, row, column);
+        flipLine( 1, 1, row, column);
+    }
+
+    function turnSelectedCell(row, column) {
+        console.log("turnSelectedCell", row, column );
+        if (tempPlayer == Player.BLACK) {
+            tempBoard[row][column].code = CodeColor.BLACK.code;  
+            tempBoard[row][column].color = CodeColor.BLACK.color;
+        }
+        else {
+            tempBoard[row][column].code = CodeColor.WHITE.code;  
+            tempBoard[row][column].color = CodeColor.WHITE.color;
+        }
     }
 
     function handleMouseup(event) {
@@ -142,11 +209,22 @@ export default function useOthello(board, setBoard, currentPlayer, setCurrentPla
         console.log("handleMouseup.cellNumber", cellNumber, cellContainer);
         if (cellNumber == null) return;
 
+        const row = Math.floor(cellNumber / 8);
+        const column = cellNumber % 8;
+
+
         // check if it is a valid move
-        checkForValidMove(childCell, cellNumber);
+        const move = isValidMove(row, column);
+        if (!move) {
+            console.log("Move was not in an eligible spot");
+            return;
+        }
+
+        // turn the current grid location to the current player's color
+        turnSelectedCell(row, column);
 
         // flip the ones that are captured
-        // flipCapturedSpots();
+        flipCapturedSpots(row, column);
 
         // update any current valid spots and make them blank
         clearOutOldOptions();
