@@ -19,12 +19,27 @@ body {
 }
 
 .app-container {
-    width: 40vw;
+    width: 50vw;
     height: 50%;
     font-size: 3.2em;
     line-height: 1.1;
     background-color: beige;
     display: flex;
+}
+
+.score-board {
+    width: 300px;
+    font-size: 24px;
+    padding-right: 10px;
+    background-color: rgb(88, 142, 200);
+    justify-content: center;
+    display: grid;
+}
+.white-score {
+    color: white;
+}
+.black-score {
+    color: black;
 }
 
 .othello-board {
@@ -71,10 +86,10 @@ body {
     border-radius: 50%;
 }
 .black-option {
-    border: 1px solid blue;
+    border: 1px solid black;
 }
 .white-option {
-    border: 1px solid red;
+    border: 1px solid white;
 
 }
 
