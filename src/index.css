@@ -84,6 +84,7 @@ body {
     width: 90%;
     height: 90%;
     border-radius: 50%;
+    /* display: none; */
 }
 .black-option {
     border: 1px solid black;
@@ -99,7 +100,10 @@ sub {
     pointer-events: none;
 }
 
-
+.white-score,
+.black-score {
+    text-align: right;
+}
 
 
 sub {
