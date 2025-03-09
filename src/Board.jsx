@@ -28,7 +28,7 @@ export default function Board() {
 
     return (
         <>
-            <Scoreboard  score={score} />
+            <Scoreboard  score={score} currentPlayer={currentPlayer} />
             <div className="othello-board">
                 {board.map((row, rowIndex) => (
                     <Fragment key={rowIndex}>

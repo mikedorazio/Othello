@@ -29,6 +29,7 @@ export default function useOthello(board, setBoard, currentPlayer, setCurrentPla
             return false;
         }
 
+        // check to see if the other side of the opposite color is still on the board
         if ((r + dr + dr < 0) || (r + dr + dr > 7)) {
             //console.log("adjacentSupport. plus one off board - row", index);
             return false;
@@ -54,7 +55,7 @@ export default function useOthello(board, setBoard, currentPlayer, setCurrentPla
         }
 
         // check if there is a space next to us and if so...return false
-        if (tempBoard[r][c].code == CodeColor.BLANK.code) {
+        if (tempBoard[r][c].code == CodeColor.BLANK.code || tempBoard[r][c].code > 2) {
             //console.log("checkLineMatch found a blank...returning false");
             return false;
         }
@@ -153,16 +154,18 @@ export default function useOthello(board, setBoard, currentPlayer, setCurrentPla
             //console.log("CHECKER SAVES THE DAY in flipLine()");
             return true;
         }
-        // make sure the spot in question is on the board
+        // make sure the spot in question is on the board in the delta row
         if ((r + dr < 0) || (r + dr > 7)) {
             //console.log("adjacentSupport. row off board - ", index);
             return false;
         }
+        // make sure the spot in question is on the board in the delta column
         if ((c + dc < 0) || (c + dc > 7)) {
             //console.log("adjacentSupport. column off board - ", index);
             return false;
         }
-        if (tempBoard[r + dr][c + dc].code == CodeColor.BLANK.code) {
+        // if the spot in quesiton is blank or an option
+        if (tempBoard[r + dr][c + dc].code == CodeColor.BLANK.code || tempBoard[r + dr][c + dc].code > 2) {
             return false;
         }
         if (tempBoard[r + dr][c + dc].code == tempPlayer.code) {
